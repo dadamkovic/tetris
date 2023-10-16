@@ -13,17 +13,12 @@
 #define _DEFINES_H
 
 #include "inttypes.h"
-#include <stdlib.h>
-#include <time.h>
-#include <stdio.h>
-#include <string.h>
-
 
 //#define ERASE_SCREEN
 
 #define STAGE_SIZE 4
 #define MAX_ROWS 10+STAGE_SIZE
-#define MAX_COLUMNS 5
+#define MAX_COLUMNS 10
 
 #define GAME_FINISHED 1
 #define GAME_RUNNING 0
@@ -58,7 +53,8 @@ typedef enum{
 typedef enum{
     MOVE_DOWN,
     MOVE_LEFT,
-    MOVE_RIGHT
+    MOVE_RIGHT,
+    ROTATE
 }enum_Move_Type;
 
 typedef enum{
@@ -73,6 +69,8 @@ typedef struct{
 
 #define NUM_SHAPES N_SHAPES 
 
+typedef uint8_t (tf_writeChar)(char);
+typedef uint8_t (tf_getRandom)(void);
 
 
 

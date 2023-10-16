@@ -76,6 +76,9 @@ uint8_t moveShape(char *play_field, enum_Move_Type move){
         case MOVE_RIGHT:
             x += 1;
             break;
+        case ROTATE:
+            rotateShape(play_field);
+            return MOVE_POS;
         default:
             //todo: add error message
             return MOVE_IMPOS;

@@ -12,6 +12,7 @@
 #include "game_control.h"
 #include "shape_moves.h"
 
+//block definitions
 const char I_BLOCK_DATA[4] = {'#','#','#','#'};
 const char O_BLOCK_DATA[8] = {'#','#','#','#',' ',' ',' ',' '};
 const char T_BLOCK_DATA[8] = {'#',' ','#','#','#',' ',' ',' '};
@@ -20,7 +21,12 @@ const char J_BLOCK_DATA[8] = {'#','#',' ','#',' ','#',' ',' '};
 const char Z_BLOCK_DATA[8] = {'#',' ','#','#',' ','#',' ',' '};
 const char S_BLOCK_DATA[8] = {' ','#','#','#','#',' ',' ',' '};
 
+tf_getRandom *getRandom;
+tf_writeChar *writeChar;
+
+
 uint8_t checkFinished(char *play_field){   
+    //if any dead symbols in the stage area it's game over
     for(int16_t i=0; i<STAGE_SIZE; i++){
         for(int16_t j=0; j<MAX_COLUMNS; j++){
             if(*(play_field+i*MAX_COLUMNS+j) == DEAD_SYMBOL){
@@ -31,13 +37,16 @@ uint8_t checkFinished(char *play_field){
     return GAME_RUNNING;
 }
 
+
 uint8_t checkMoveDown(char *play_field){
     uint8_t move_result = MOVE_POS;
 
     for(int16_t i=(MAX_ROWS-1); i>(-1); i--){
             for(uint16_t j=0; j<MAX_COLUMNS; j++){
                 if(*(play_field + i*MAX_COLUMNS + j) == BLOCK_SYMBOL){
+                    //cannot move down due to the bottom of play field
                     if(i == (MAX_ROWS-1)) move_result = MOVE_IMPOS;
+                    //cannot move down because there is dead symbol below
                     if(*(play_field + (i+1)*MAX_COLUMNS + j) == DEAD_SYMBOL) move_result = MOVE_IMPOS;
                 }
             }
@@ -49,7 +58,7 @@ uint8_t checkMoveDown(char *play_field){
 struct_Shape_Data *getRandomShape(){
     static struct_Shape_Data shape_data;
 
-    switch (rand() % NUM_SHAPES){
+    switch (getRandom() % NUM_SHAPES){
         case I_BEAM:
             shape_data.data = I_BLOCK_DATA;
             shape_data.width = 1;
@@ -97,11 +106,13 @@ uint8_t getShapeCoord(char *play_field, int8_t (*shape_coord)[2]){
     return 0;
 }
 
+
 uint8_t eraseShape(char *play_field){
     int8_t shape_coord[4][2];
     uint8_t x, y = 0;
     getShapeCoord(play_field, shape_coord);
 
+    //remove all shapes at the coordinates
     for(uint8_t i=0;i<4;i++){
         x = shape_coord[i][0];
         y = shape_coord[i][1];
@@ -110,6 +121,7 @@ uint8_t eraseShape(char *play_field){
 
     return 0;
 }
+
 
 uint8_t writeShape(char *play_field, int8_t (*shape_coord)[2]){
     uint8_t x,y = 0;
@@ -122,6 +134,7 @@ uint8_t writeShape(char *play_field, int8_t (*shape_coord)[2]){
 
     return 0;
 }
+
 
 uint8_t killShape(char *play_field){
     uint8_t x,y = 0;
@@ -145,7 +158,7 @@ uint8_t addShape(char *play_field){
     uint8_t shape_width = sel_shape->width;
     
 
-    uint16_t index = rand() % (MAX_COLUMNS - shape_width);
+    uint16_t index = getRandom() % (MAX_COLUMNS - shape_width);
 
     for(int16_t i=0; i<STAGE_SIZE; i++){
         for(int16_t j=0; j<MAX_COLUMNS; j++){
@@ -166,20 +179,20 @@ uint8_t printGame(char *play_field, enum_ShowSelect_Type type){
     #ifdef ERASE_SCREEN
         printf("%c%c%c%c",0x1B,0x5B,0x32,0x4A);
     #endif
-    for(uint8_t r=0;r<MAX_COLUMNS;r++)printf("--");
-    printf("\n");
+    for(uint8_t r=0;r<2*MAX_COLUMNS;r++)writeChar('-');
+    writeChar('\n');
 
     for(uint16_t i=print_start; i<MAX_ROWS; i++){
-        printf("|");
+        writeChar('|');
         for(uint16_t j=0; j<MAX_COLUMNS; j++){
-            printf("%c ", *(play_field + i*MAX_COLUMNS + j));
+            writeChar(*(play_field + i*MAX_COLUMNS + j));
         }
-        printf("|");
-        printf("\n");
+        writeChar('|');
+        writeChar('\n');
     }
 
-    for(uint8_t r=0;r<MAX_COLUMNS;r++)printf("--");
-    printf("\n");
+    for(uint8_t r=0;r<2*MAX_COLUMNS;r++)writeChar('-');
+    writeChar('\n');
 
     return 0;
 

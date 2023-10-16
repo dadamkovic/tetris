@@ -15,6 +15,10 @@
 #include "defines.h"
 
 
+extern tf_getRandom *getRandom;
+extern tf_writeChar *writeChar;
+
+
 /**
  * @brief Checks for any dead shapes in stage  (finish condition)
  * 

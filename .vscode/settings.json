@@ -4,6 +4,7 @@
     "stm32-for-vscode.armToolchainPath": false,
     "files.associations": {
         "game_control.h": "c",
-        "shape_moves.h": "c"
+        "shape_moves.h": "c",
+        "stdlib.h": "c"
     }
 }
